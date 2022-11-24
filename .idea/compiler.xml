@@ -6,6 +6,7 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
+        <module name="Swen3Projekt" />
         <module name="openapi-spring" />
         <module name="Swen3" />
       </profile>
@@ -14,6 +15,7 @@
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
       <module name="Swen3" options="-parameters" />
+      <module name="Swen3Projekt" options="-parameters" />
       <module name="openapi-spring" options="-parameters" />
     </option>
   </component>
