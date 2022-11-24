@@ -1,19 +1,15 @@
 package at.fhtw.swen3.services.dto;
 
-import java.net.URI;
 import java.util.Objects;
-import at.fhtw.swen3.services.dto.Hop;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonTypeName;
-import org.openapitools.jackson.nullable.JsonNullable;
-import java.time.OffsetDateTime;
+
 import javax.validation.Valid;
 import javax.validation.constraints.*;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 
-import java.util.*;
 import javax.annotation.Generated;
 
 /**
@@ -22,7 +18,7 @@ import javax.annotation.Generated;
 
 @JsonTypeName("warehouse_allOf_nextHops")
 @Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2022-11-24T10:56:43.233247Z[Etc/UTC]")
-public class WarehouseAllOfNextHops {
+public class WarehouseNextHops {
 
   @JsonProperty("traveltimeMins")
   private Integer traveltimeMins;
@@ -30,7 +26,7 @@ public class WarehouseAllOfNextHops {
   @JsonProperty("hop")
   private Hop hop;
 
-  public WarehouseAllOfNextHops traveltimeMins(Integer traveltimeMins) {
+  public WarehouseNextHops traveltimeMins(Integer traveltimeMins) {
     this.traveltimeMins = traveltimeMins;
     return this;
   }
@@ -49,7 +45,7 @@ public class WarehouseAllOfNextHops {
     this.traveltimeMins = traveltimeMins;
   }
 
-  public WarehouseAllOfNextHops hop(Hop hop) {
+  public WarehouseNextHops hop(Hop hop) {
     this.hop = hop;
     return this;
   }
@@ -76,7 +72,7 @@ public class WarehouseAllOfNextHops {
     if (o == null || getClass() != o.getClass()) {
       return false;
     }
-    WarehouseAllOfNextHops warehouseAllOfNextHops = (WarehouseAllOfNextHops) o;
+    WarehouseNextHops warehouseAllOfNextHops = (WarehouseNextHops) o;
     return Objects.equals(this.traveltimeMins, warehouseAllOfNextHops.traveltimeMins) &&
         Objects.equals(this.hop, warehouseAllOfNextHops.hop);
   }

@@ -1,4 +1,4 @@
-package at.fhtw.swen3.controller.rest;
+package at.fhtw.swen3.services;
 
 import org.springframework.web.context.request.NativeWebRequest;
 
