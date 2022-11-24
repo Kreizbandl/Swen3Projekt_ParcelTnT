@@ -7,7 +7,7 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class TransfarewarehouseEntity {
+public class TransferwarehouseEntity {
     private Long id;
     private String regionGeoJson = null;
     private String logisticsPartner = null;
