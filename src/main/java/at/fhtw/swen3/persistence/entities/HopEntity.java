@@ -2,6 +2,7 @@ package at.fhtw.swen3.persistence.entities;
 
 import lombok.*;
 
+import javax.persistence.*;
 import javax.validation.constraints.Pattern;
 
 @Getter
@@ -9,7 +10,11 @@ import javax.validation.constraints.Pattern;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
+@Entity
+@Table(name = "hop")
 public class HopEntity {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String hopType = null;
     private String code = null;
@@ -17,5 +22,7 @@ public class HopEntity {
     private String description = null;
     private Integer processingDelayMins = null;
     private String locationName = null;
+    @ManyToOne
+    @JoinColumn(name = "location_coordinates_id")
     private GeoCoordinateEntity locationCoordinates = null;
 }

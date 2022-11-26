@@ -2,6 +2,7 @@ package at.fhtw.swen3.persistence.entities;
 
 import lombok.*;
 
+import javax.persistence.*;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
@@ -13,19 +14,29 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
+@Entity
+@Table(name = "parcel")
 public class ParcelEntity {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @Min(value = 0, message = "Weight must be greater than 0")
     private Float weight = null;
+    @ManyToOne
+    @JoinColumn(name = "recipient_id")
     @NotNull
     private RecipientEntity recipient = null;
+    @ManyToOne
+    @JoinColumn(name = "sender_id")
     @NotNull
     private RecipientEntity sender = null;
     @Pattern(regexp="^[A-Z0-9]{9}$")
     private String trackingId = null;
     private StateEnum state = null;
+    @OneToMany//(mappedBy = "parcel")
     @NotNull
     private List<HopArrivalEntity> visitedHops = new ArrayList<>();
+    @OneToMany//(mappedBy = "parcel")
     @NotNull
     private List<HopArrivalEntity> futureHops = new ArrayList<>();
 
