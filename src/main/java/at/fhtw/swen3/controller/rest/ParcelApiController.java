@@ -3,7 +3,12 @@ package at.fhtw.swen3.controller.rest;
 import at.fhtw.swen3.controller.ParcelApi;
 
 
+import at.fhtw.swen3.services.dto.NewParcelInfo;
+import at.fhtw.swen3.services.dto.Parcel;
+import at.fhtw.swen3.services.dto.TrackingInformation;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.context.request.NativeWebRequest;
 
@@ -12,18 +17,50 @@ import javax.annotation.Generated;
 
 @Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2022-11-24T10:56:43.233247Z[Etc/UTC]")
 @Controller
+@Slf4j
 public class ParcelApiController implements ParcelApi {
 
     private final NativeWebRequest request;
 
     @Autowired
     public ParcelApiController(NativeWebRequest request) {
+        log.info("contrsuctor");
         this.request = request;
     }
 
     @Override
     public Optional<NativeWebRequest> getRequest() {
+        log.info("getRequest");
         return Optional.ofNullable(request);
     }
 
+    @Override
+    public ResponseEntity<Void> reportParcelDelivery(String trackingId) {
+        log.info("reportParcelDelivery " + trackingId);
+        return ParcelApi.super.reportParcelDelivery(trackingId);
+    }
+
+    @Override
+    public ResponseEntity<Void> reportParcelHop(String trackingId, String code) {
+        log.info("reportParcelHop " + trackingId + " " + code);
+        return ParcelApi.super.reportParcelHop(trackingId, code);
+    }
+
+    @Override
+    public ResponseEntity<NewParcelInfo> submitParcel(Parcel parcel) {
+        log.info("submitParcel " + parcel);
+        return ParcelApi.super.submitParcel(parcel);
+    }
+
+    @Override
+    public ResponseEntity<TrackingInformation> trackParcel(String trackingId) {
+        log.info("trackParcel " + trackingId);
+        return ParcelApi.super.trackParcel(trackingId);
+    }
+
+    @Override
+    public ResponseEntity<NewParcelInfo> transitionParcel(String trackingId, Parcel parcel) {
+        log.info("transitionParcel " + trackingId + " " + parcel);
+        return ParcelApi.super.transitionParcel(trackingId, parcel);
+    }
 }
