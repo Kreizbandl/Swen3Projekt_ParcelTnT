@@ -17,4 +17,13 @@ public class GeoCoordinateEntity {
     private Long id;
     private Double lat = null;
     private Double lon = null;
+
+    @Override
+    public String toString() {
+        return "GeoCoordinateEntity{" +
+                "id=" + id +
+                ", lat=" + lat +
+                ", lon=" + lon +
+                '}';
+    }
 }
