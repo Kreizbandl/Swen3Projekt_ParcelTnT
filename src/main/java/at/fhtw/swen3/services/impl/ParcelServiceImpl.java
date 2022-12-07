@@ -22,9 +22,15 @@ public class ParcelServiceImpl implements ParcelService {
 
     @Override
     public NewParcelInfo submitParcel(ParcelEntity parcel) throws Exception {
+        // TODO make ID unique
+        // TODO add gps coordinates
         // generate tracking ID
         String trackingId = RandomStringUtils.randomAlphabetic(9).toUpperCase();
         parcel.setTrackingId(trackingId);
+
+        parcel.setState(ParcelEntity.StateEnum.PICKUP);
+
+        // write to DB
         this.parcelRepository.save(parcel);
         this.recipientRepository.save(parcel.getSender());
         this.recipientRepository.save(parcel.getRecipient());
