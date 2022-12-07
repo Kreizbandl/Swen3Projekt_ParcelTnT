@@ -1,4 +1,36 @@
 package at.fhtw.swen3.services.impl;
 
-public class ParcelServiceImpl {
+import at.fhtw.swen3.persistence.entities.ParcelEntity;
+import at.fhtw.swen3.persistence.repositories.ParcelRepository;
+import at.fhtw.swen3.persistence.repositories.RecipientRepository;
+import at.fhtw.swen3.services.ParcelService;
+import at.fhtw.swen3.services.dto.NewParcelInfo;
+import at.fhtw.swen3.services.dto.Recipient;
+import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.RandomStringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+
+@Slf4j
+@AllArgsConstructor
+public class ParcelServiceImpl implements ParcelService {
+
+    @Autowired
+    private ParcelRepository parcelRepository;
+    @Autowired
+    private RecipientRepository recipientRepository;
+
+    @Override
+    public NewParcelInfo submitParcel(ParcelEntity parcel) throws Exception {
+        // generate tracking ID
+        String trackingId = RandomStringUtils.randomAlphabetic(9).toUpperCase();
+        parcel.setTrackingId(trackingId);
+        this.parcelRepository.save(parcel);
+        this.recipientRepository.save(parcel.getSender());
+        this.recipientRepository.save(parcel.getRecipient());
+
+        NewParcelInfo newParcelInfo = new NewParcelInfo(trackingId);
+        log.info("Submit parcel '" + parcel + "' with Tracking ID: " + trackingId);
+        return newParcelInfo;
+    }
 }
