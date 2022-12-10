@@ -10,6 +10,7 @@ import at.fhtw.swen3.services.dto.Warehouse;
 import at.fhtw.swen3.services.mapper.GeoCoordinateMapper;
 import at.fhtw.swen3.services.mapper.WarehouseMapper;
 import at.fhtw.swen3.services.mapper.WarehouseMapperImpl;
+import at.fhtw.swen3.services.validation.Validator;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,16 +28,16 @@ public class WarehouseServiceImpl implements WarehouseService {
     @Autowired
     private HopRepository hopRepository;
 
+    private final Validator validator;
+
+
 
     @Override
     public void importWarehouse(Warehouse warehouse) {
+        validator.validate(warehouse);
         log.info("Importing warehouse " + warehouse);
         WarehouseEntity warehouseEntity = WarehouseMapper.INSTANCE.dtoToEntity(warehouse);
-
-        warehouseEntity.setLevel(warehouse.getLevel());
-        //warehouseEntity.setId(warehouse.);
-        //warehouseEntity.setNextHops(warehouse.getNextHops());
-        //warehouseRepository = warehouseEntity;
+        warehouseRepository.save(warehouseEntity);
     }
 
     @Override

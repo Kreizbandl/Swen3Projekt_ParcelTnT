@@ -29,7 +29,7 @@ class ParcelMapperTest {
         parcel.setRecipient(recipient);
         parcel.setSender(recipient);
 
-        NewParcelInfo newParcelInfo = new NewParcelInfo();
+        NewParcelInfo newParcelInfo = new NewParcelInfo("ABCDEFGHI");
         newParcelInfo.setTrackingId("some tracking id...");
 
         OffsetDateTime time = OffsetDateTime.now();
