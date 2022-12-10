@@ -5,7 +5,6 @@ import at.fhtw.swen3.persistence.repositories.ParcelRepository;
 import at.fhtw.swen3.persistence.repositories.RecipientRepository;
 import at.fhtw.swen3.services.ParcelService;
 import at.fhtw.swen3.services.dto.NewParcelInfo;
-import at.fhtw.swen3.services.dto.Recipient;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.RandomStringUtils;
@@ -21,7 +20,7 @@ public class ParcelServiceImpl implements ParcelService {
     private RecipientRepository recipientRepository;
 
     @Override
-    public NewParcelInfo submitParcel(ParcelEntity parcel) throws Exception {
+    public NewParcelInfo submitParcel(ParcelEntity parcel) {
         // TODO make ID unique
         // TODO add gps coordinates
         // generate tracking ID
@@ -39,4 +38,5 @@ public class ParcelServiceImpl implements ParcelService {
         log.info("Submit parcel '" + parcel + "' with Tracking ID: " + trackingId);
         return newParcelInfo;
     }
+
 }

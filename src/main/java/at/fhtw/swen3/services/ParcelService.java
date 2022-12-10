@@ -5,6 +5,6 @@ import at.fhtw.swen3.services.dto.NewParcelInfo;
 import at.fhtw.swen3.services.dto.Recipient;
 
 public interface ParcelService {
-    public NewParcelInfo submitParcel(ParcelEntity parcel) throws Exception;
+    public NewParcelInfo submitParcel(ParcelEntity parcel);
 
 }
