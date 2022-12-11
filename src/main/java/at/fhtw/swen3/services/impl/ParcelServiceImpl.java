@@ -1,9 +1,13 @@
 package at.fhtw.swen3.services.impl;
 
+import at.fhtw.swen3.gps.service.GeoEncodingService;
+import at.fhtw.swen3.gps.service.impl.BindEncodingProxy;
+import at.fhtw.swen3.persistence.entities.GeoCoordinateEntity;
 import at.fhtw.swen3.persistence.entities.ParcelEntity;
 import at.fhtw.swen3.persistence.repositories.ParcelRepository;
 import at.fhtw.swen3.persistence.repositories.RecipientRepository;
 import at.fhtw.swen3.services.ParcelService;
+import at.fhtw.swen3.services.dto.GeoCoordinate;
 import at.fhtw.swen3.services.dto.NewParcelInfo;
 import at.fhtw.swen3.services.validation.Validator;
 import lombok.AllArgsConstructor;
@@ -22,6 +26,8 @@ public class ParcelServiceImpl implements ParcelService {
     private RecipientRepository recipientRepository;
 
     private final Validator validator;
+    private final GeoEncodingService geoEncoding = new BindEncodingProxy();
+
 
     @Override
     public NewParcelInfo submitParcel(ParcelEntity parcel) {
@@ -42,6 +48,8 @@ public class ParcelServiceImpl implements ParcelService {
 
         NewParcelInfo newParcelInfo = new NewParcelInfo(trackingId);
         log.info("Submit parcel '" + parcel + "' with Tracking ID: " + trackingId);
+        log.info("Coordinates for parcel: " + geoEncoding.encodeAddress(parcel.getRecipient()));
+        log.info("Future hops: " + parcel.getFutureHops());
         return newParcelInfo;
     }
 
@@ -51,5 +59,14 @@ public class ParcelServiceImpl implements ParcelService {
         parcel.setState(ParcelEntity.StateEnum.DELIVERED);
         this.parcelRepository.save(parcel);
     }
+
+    @Override
+    public GeoCoordinateEntity trackParcel(ParcelEntity parcel) {
+        validator.validate(parcel.getTrackingId());
+        log.info("Visited hops for parcel: " + parcel.getVisitedHops());
+        log.info("Future hops for parcel: " + parcel.getFutureHops());
+        return geoEncoding.encodeAddress(parcel.getRecipient());
+    }
+
 
 }
