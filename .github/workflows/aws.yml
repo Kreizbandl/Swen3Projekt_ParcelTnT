@@ -6,71 +6,40 @@ on:
   #Trigger the workflow on push from the main branch
   push:
     branches: [ "master" ]
+
 jobs:
-  #Test's job
-  tests:
-    name: Unit tests
-    #Run on Ubuntu using the latest version
-    runs-on: ubuntu-latest
-    #Job's steps
-    steps:
-      #Check-out your repository under $GITHUB_WORKSPACE, so your workflow can access it
-      - uses: actions/checkout@v1
-      #Set up JDK 11
-      - name: Set up JDK
-        uses: actions/setup-java@v1
-        with:
-          java-version: '11'
-      #Set up Maven cache
-      - name: Cache Maven packages
-        #This action allows caching dependencies and build outputs to improve workflow execution time.
-        uses: actions/cache@v1
-        with:
-          path: ~/.m2
-          key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
-          restore-keys: ${{ runner.os }}-m2
-      #Run Tests
-      - name: Run Tests
-        run: mvn -B test
-
-
- #Build's job
   build:
-    #Depends on test's job
-    needs: tests
-    #Depends on sonar's job
-    #needs: sonar
-    name: Build
-    #Run on Ubuntu using the latest version
+
     runs-on: ubuntu-latest
+
     steps:
-      #Check-out your repository under $GITHUB_WORKSPACE, so your workflow can access it
-      - uses: actions/checkout@v1
-      #Set up JDK 11
-      - name: Set up JDK
-        uses: actions/setup-java@v1
-        with:
-          java-version: '11'
-      #Set up Maven cache
-      - name: Cache Maven packages
-        #This action allows caching dependencies and build outputs to improve workflow execution time.
-        uses: actions/cache@v1
-        with:
-          path: ~/.m2
-          key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
-          restore-keys: ${{ runner.os }}-m2
-      #Build the application using Maven
-      - name: Build with Maven
-        run: mvn -B package -DskipTests --file pom.xml
-      #Build the application using Maven
-      - name: Upload JAR
-        #This uploads artifacts from your workflow allowing you to share data between jobs and store data once a workflow is complete.
-        uses: actions/upload-artifact@v2
-        with:
-          #Set artifact name
-          name: artifact
-          #From this path
-          path: target/swagger-spring-1.0.0.jar
+    - name: Start Postgresql on Ubuntu
+      run: |
+        sudo systemctl start postgresql.service
+        pg_isready
+    - name: Create scheduler user
+      run: |
+        sudo -u postgres psql --command="ALTER USER postgres WITH PASSWORD 'password';" --command="\du"
+    - name: Create parceltrace Database
+      run: |
+        sudo -u postgres createdb --owner=postgres parceltrace
+        PGPASSWORD=password psql --username=postgres --host=localhost --list parceltrace
+        
+    - uses: actions/checkout@v3
+    - name: Set up JDK 17
+      uses: actions/setup-java@v3
+      with:
+        java-version: '17'
+        distribution: 'temurin'
+        cache: maven
+    - name: Build with Maven
+      run: mvn -B package --file pom.xml
+    - name: Upload JAR
+      uses: actions/upload-artifact@v3
+      with:
+        name: artifact
+        path: target/openapi-spring-1.22.1.jar
+
 #Deploy's job
   deploy:
   #Depends on build's job
@@ -81,19 +50,19 @@ jobs:
     steps:
       - name: Download JAR
         #Download the artifact which was uploaded in the build's job
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v3
         with:
           name: artifact
       #Deploy the artifact (JAR) into AWS Beanstalk
       - name: Deploy to EB
         uses: einaregilsson/beanstalk-deploy@v13
         with:
-          aws_access_key: ASIATJ2SQ66ME6QY5QNK
-          aws_secret_key: NJTm6c5zif5148DPXoff6LPzqWFlKN62MpwUMQKN
-          aws_session_token: FwoGZXIvYXdzEB0aDNTMkughXogm6T1CySLLAUowdiD37G0uaUF9vxUUetN9QewaEeTafAWXdKQi+7vKc1MHMXg7hWE/W7XBF749dYm/Ng2NruhfNSI5hwH4gaR0WdxyLGN6o/giX9Vdx1eC7QbIKQH+rG4baswW1xuy9+4qREvzKPC72IzBDyA6bsasmw8/Jgvc2R6a2FxOft22jIQB+BN9BrhJC3ikGYbeS37nqsefNQZnxDypr2sAjv2SRw7+jgjYOPb9YZKS83u/iC7IGiSdY4P0nvrOTosxBm0FBWHyFNDIx38kKIzxmpsGMi0AFsF5eFaQwu52cfYCM5Bc+XRXcALAVCvJq/wy81hxqiV6wJzmcSGH8zSwjz0=
+          aws_access_key: ASIATJ2SQ66MODQ7K7UH
+          aws_secret_key: iDJPS93IhbmNaIVJ9uTPCKrpuR7XZ0WIxMZiC9OM
+          aws_session_token: FwoGZXIvYXdzEBwaDDhyP2OthSt+UmwBaCLLAfzzBuEtOIRSCyQdo3i1tcunfTgZhk8n3up7OBtM/fHjLspgzCPp2OoiL0V6FNsc0EqtthK9ST1VDik0x2oYLqZCQRSJsiFQWXsKju0AmxmUueJZx+rJFfA2hlgSvKUTSwq8FROYgEjoJPqfalJfVEPWTJpvX9qCiE1mj+Nq2SCTMlg3q139tGgiddCggZMrg0Twtzf4iccHeS/ntGW6eYPjp7Jd4J13dvPgomkGLu1l3rYLOsPEbWhPcGlfHCnKqw0f3pCsxOMh8vGkKN2T7J0GMi2N4PrMZh0DQyc5a7oeXlgbVEw+dk6mlfh1CMHSrtSz0J5niLS2c7GQiwZHQYQ=
           use_existing_version_if_available: false
           application_name: ParcelTnT
           environment_name: Parceltnt-env
           version_label: ${{github.SHA}}
           region: us-east-1
-          deployment_package: swagger-spring-1.0.0.jar
+          deployment_package: openapi-spring-1.22.1.jar
