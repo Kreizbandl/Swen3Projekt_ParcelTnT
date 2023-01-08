@@ -46,7 +46,8 @@ public class ParcelServiceImpl implements ParcelService {
         this.recipientRepository.save(parcel.getSender());
         this.recipientRepository.save(parcel.getRecipient());
 
-        NewParcelInfo newParcelInfo = new NewParcelInfo(trackingId);
+        NewParcelInfo newParcelInfo = new NewParcelInfo();
+        newParcelInfo.setTrackingId(trackingId);
         log.info("Submit parcel '" + parcel + "' with Tracking ID: " + trackingId);
         log.info("Coordinates for parcel: " + geoEncoding.encodeAddress(parcel.getRecipient()));
         log.info("Future hops: " + parcel.getFutureHops());
