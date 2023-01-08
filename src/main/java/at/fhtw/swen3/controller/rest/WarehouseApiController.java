@@ -30,6 +30,7 @@ public class WarehouseApiController implements WarehouseApi {
     @Override
     public Optional<NativeWebRequest> getRequest() {
         log.info("getRequest");
+        log.info("testing yaml files");
         return Optional.ofNullable(request);
     }
 
