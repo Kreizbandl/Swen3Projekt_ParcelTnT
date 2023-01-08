@@ -15,12 +15,17 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Start Postgresql
+    - name: Start Postgresql on Ubuntu
       run: |
         sudo systemctl start postgresql.service
         pg_isready
+    - name: Create scheduler user
+      run: |
         sudo -u postgres psql --command="ALTER USER postgres WITH PASSWORD '';" --command="\du"
-        sudo -u postgres createdb parceltrace --owner=postgres
+    - name: Create parceltrace Database
+      run: |
+        sudo -u postgres createdb --owner=postgres parceltrace
+        PGPASSWORD= psql --username=postgres --host=localhost --list parceltrace
         
     - uses: actions/checkout@v3
     - name: Set up JDK 17
