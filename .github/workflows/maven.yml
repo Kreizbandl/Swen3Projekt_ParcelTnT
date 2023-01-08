@@ -21,11 +21,11 @@ jobs:
         pg_isready
     - name: Create scheduler user
       run: |
-        sudo -u postgres psql --command="ALTER USER postgres WITH PASSWORD '';" --command="\du"
+        sudo -u postgres psql --command="ALTER USER postgres WITH PASSWORD 'password';" --command="\du"
     - name: Create parceltrace Database
       run: |
         sudo -u postgres createdb --owner=postgres parceltrace
-        PGPASSWORD= psql --username=postgres --host=localhost --list parceltrace
+        PGPASSWORD=password psql --username=postgres --host=localhost --list parceltrace
         
     - uses: actions/checkout@v3
     - name: Set up JDK 17
