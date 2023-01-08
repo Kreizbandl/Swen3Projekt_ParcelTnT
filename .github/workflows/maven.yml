@@ -15,6 +15,13 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+    - name: Start Postgresql
+      run: |
+        sudo systemctl start postgresql.service
+        pg_isready
+        sudo -u postgres psql --command="ALTER USER postgres WITH PASSWORD 'password';" --command="\du"
+        sudo -u postgres createdb swkom --owner=postgres
+        
     - uses: actions/checkout@v3
     - name: Set up JDK 17
       uses: actions/setup-java@v3
@@ -24,3 +31,18 @@ jobs:
         cache: maven
     - name: Build with Maven
       run: mvn -B package --file pom.xml
+    - name: Upload JAR
+      uses: actions/upload-artifact@v3
+      with:
+        name: artifact
+        path: target/swkom_project-0.0.1-SNAPSHOT.jar
+
+  deploy:
+    needs: build
+    name: CD
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download JAR
+        uses: actions/download-artifact@v3
+        with:
+          name: artifact
