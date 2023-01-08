@@ -13,12 +13,14 @@ import at.fhtw.swen3.services.validation.Validator;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-
+import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-@AllArgsConstructor @Slf4j
+@Service
+@AllArgsConstructor
+@Slf4j
 public class WarehouseServiceImpl implements WarehouseService {
 
     @Autowired
