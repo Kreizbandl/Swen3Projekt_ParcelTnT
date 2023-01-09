@@ -57,9 +57,9 @@ jobs:
       - name: Deploy to EB
         uses: einaregilsson/beanstalk-deploy@v13
         with:
-          aws_access_key: ASIATJ2SQ66MODQ7K7UH
-          aws_secret_key: iDJPS93IhbmNaIVJ9uTPCKrpuR7XZ0WIxMZiC9OM
-          aws_session_token: FwoGZXIvYXdzEBwaDDhyP2OthSt+UmwBaCLLAfzzBuEtOIRSCyQdo3i1tcunfTgZhk8n3up7OBtM/fHjLspgzCPp2OoiL0V6FNsc0EqtthK9ST1VDik0x2oYLqZCQRSJsiFQWXsKju0AmxmUueJZx+rJFfA2hlgSvKUTSwq8FROYgEjoJPqfalJfVEPWTJpvX9qCiE1mj+Nq2SCTMlg3q139tGgiddCggZMrg0Twtzf4iccHeS/ntGW6eYPjp7Jd4J13dvPgomkGLu1l3rYLOsPEbWhPcGlfHCnKqw0f3pCsxOMh8vGkKN2T7J0GMi2N4PrMZh0DQyc5a7oeXlgbVEw+dk6mlfh1CMHSrtSz0J5niLS2c7GQiwZHQYQ=
+          aws_access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws_session_token: ${{ secrets.AWS_SESSION_TOKEN }}
           use_existing_version_if_available: false
           application_name: ParcelTnT
           environment_name: Parceltnt-env
