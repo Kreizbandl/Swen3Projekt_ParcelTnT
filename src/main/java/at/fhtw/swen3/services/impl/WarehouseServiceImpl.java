@@ -36,9 +36,14 @@ public class WarehouseServiceImpl implements WarehouseService {
 
     @Override
     public void importWarehouse(Warehouse warehouse) {
+        //validate the data
         validator.validate(warehouse);
-        log.info("Importing warehouse " + warehouse);
+        //log.info("Importing warehouse before mapping: " + warehouse);
+        //TODO reset/clear entire db
         WarehouseEntity warehouseEntity = WarehouseMapper.INSTANCE.dtoToEntity(warehouse);
+        //store data in db
+        //log.info("Importing warehosues after mapping: " + warehouse);
+        //TODO this doesn't store the entire load in the db -> probably mistakes in the @Entities with the @ManyToOne etc.
         warehouseRepository.save(warehouseEntity);
     }
 
