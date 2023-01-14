@@ -36,7 +36,6 @@ public class ParcelServiceImpl implements ParcelService {
     private final Validator validator;
     private final GeoEncodingService geoEncoding = new BindEncodingProxy();
 
-
     @Override
     public NewParcelInfo submitParcel(Parcel parcel) {
         ParcelEntity parcelEntity = ParcelMapper.INSTANCE.dtoToParcelEntity(parcel);
@@ -87,6 +86,42 @@ public class ParcelServiceImpl implements ParcelService {
         TrackingInformation trackingInformation = ParcelMapper.INSTANCE.entityToTrackingInformationDto(parcelEntity);
 
         return trackingInformation;
+    }
+
+    //TODO refactor -> same function as submitParcel()
+    @Override
+    public NewParcelInfo transitionParcel(String trackingId, Parcel parcel) {
+        ParcelEntity parcelEntity = ParcelMapper.INSTANCE.dtoToParcelEntity(parcel);
+
+        //validate data
+        validator.validate(parcel);
+
+        //TODO check wheter trackingId is free or not
+        parcelEntity.setTrackingId(trackingId);
+
+        // TODO add gps coordinates
+
+        //predict future hops
+        //TODO kill me!!!
+        List<HopArrivalEntity> list = new ArrayList<>();
+        list.add(new HopArrivalEntity());
+        parcelEntity.setFutureHops(list);
+        parcelEntity.setVisitedHops(list);
+
+        //set pickup state
+        parcelEntity.setState(ParcelEntity.StateEnum.PICKUP);
+
+        // write to DB
+        this.recipientRepository.save(parcelEntity.getSender());
+        this.recipientRepository.save(parcelEntity.getRecipient());
+        this.parcelRepository.save(parcelEntity);
+
+        NewParcelInfo newParcelInfo = new NewParcelInfo();
+        newParcelInfo.setTrackingId(trackingId);
+        log.info("Submit parcel '" + parcel + "' with Tracking ID: " + trackingId);
+        //log.info("Coordinates for parcel: " + geoEncoding.encodeAddress(parcelEntity.getRecipient()));
+        //log.info("Future hops: " + parcelEntity.getFutureHops());
+        return newParcelInfo;
     }
 
     public void reportParcelDelivery(ParcelEntity parcel) {

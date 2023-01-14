@@ -9,14 +9,13 @@ import at.fhtw.swen3.services.dto.*;
 import java.util.Optional;
 
 public interface ParcelService {
-    public NewParcelInfo submitParcel(Parcel parcel);
+    NewParcelInfo submitParcel(Parcel parcel);
+    void reportParcelDelivery(ParcelEntity parcel);
+    TrackingInformation trackParcel(String trackingId);
+    NewParcelInfo transitionParcel(String trackingId, Parcel parcel);
 
-    public void reportParcelDelivery(ParcelEntity parcel);
+    //GeoCoordinateEntity trackParcel(ParcelEntity parcel);
 
-    public TrackingInformation trackParcel(String trackingId);
-
-    //public GeoCoordinateEntity trackParcel(ParcelEntity parcel);
-
-    public void reportParcelArrivalAtHop(ParcelEntity parcel, HopArrivalEntity hopArrival);
+    void reportParcelArrivalAtHop(ParcelEntity parcel, HopArrivalEntity hopArrival);
 
 }
