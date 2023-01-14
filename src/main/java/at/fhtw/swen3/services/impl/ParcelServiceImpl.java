@@ -4,7 +4,9 @@ import at.fhtw.swen3.gps.service.GeoEncodingService;
 import at.fhtw.swen3.gps.service.impl.BindEncodingProxy;
 import at.fhtw.swen3.persistence.entities.GeoCoordinateEntity;
 import at.fhtw.swen3.persistence.entities.HopArrivalEntity;
+import at.fhtw.swen3.persistence.entities.HopEntity;
 import at.fhtw.swen3.persistence.entities.ParcelEntity;
+import at.fhtw.swen3.persistence.repositories.HopRepository;
 import at.fhtw.swen3.persistence.repositories.ParcelRepository;
 import at.fhtw.swen3.persistence.repositories.RecipientRepository;
 import at.fhtw.swen3.services.ParcelService;
@@ -21,6 +23,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 
 @Service
@@ -32,6 +35,8 @@ public class ParcelServiceImpl implements ParcelService {
     private ParcelRepository parcelRepository;
     @Autowired
     private RecipientRepository recipientRepository;
+    @Autowired
+    private HopRepository hopRepository;
 
     private final Validator validator;
     private final GeoEncodingService geoEncoding = new BindEncodingProxy();
@@ -124,30 +129,50 @@ public class ParcelServiceImpl implements ParcelService {
         return newParcelInfo;
     }
 
+    @Override
+    public void reportParcelArrivalAtHop(String trackingId, String code) {
+        //validate data
+        validator.validate(trackingId);
+        validator.validate(code);
+
+        //get parcel from db
+        ParcelEntity parcelEntity = parcelRepository.findByTrackingId(trackingId);
+
+        //search in future/(visited) hops for hop with code
+        HopArrivalEntity wantedHopArrivalEntity = null;
+        for(HopArrivalEntity hopArrivalEntity : parcelEntity.getFutureHops()){
+            if(Objects.equals(hopArrivalEntity.getCode(), code)){
+                wantedHopArrivalEntity = hopArrivalEntity;
+            }
+        }
+
+        //add and remove
+        parcelEntity.addHopToVisitedHops(wantedHopArrivalEntity);
+        parcelEntity.removeHopFromFutureHops(wantedHopArrivalEntity);
+
+        //find hop type of hopArrival
+        HopEntity hopEntity = hopRepository.getWarehouseOrTruckByCode(code);
+        String hopType = hopEntity.getHopType();
+
+        //update state if
+        if(hopType == "Warehouse"){
+            parcelEntity.setState(ParcelEntity.StateEnum.INTRANSPORT);
+        }else if(hopType == "Truck"){
+            parcelEntity.setState(ParcelEntity.StateEnum.INTRUCKDELIVERY);
+        }else if(hopType == "Transferwarehouse"){
+            //TODO some stuff API ...
+            parcelEntity.setState(ParcelEntity.StateEnum.TRANSFERRED);
+        }
+
+        //update parcel
+        parcelRepository.save(parcelEntity);
+    }
+
     public void reportParcelDelivery(ParcelEntity parcel) {
         validator.validate(parcel);
 
         parcel.setState(ParcelEntity.StateEnum.DELIVERED);
         this.parcelRepository.save(parcel);
-    }
-
-    public void reportParcelArrivalAtHop(ParcelEntity parcel, HopArrivalEntity hopArrival) {
-        validator.validate(parcel);
-        validator.validate(hopArrival);
-
-        log.info("Reporting Arrival of Parcel: " + parcel + "\n at hop: " + hopArrival);
-
-        // remove hop from future hops and add to visited hops
-        parcel.setFutureHops(parcel.getFutureHops().subList(1, parcel.getFutureHops().size()));
-
-        List<HopArrivalEntity> visitedHops = parcel.getVisitedHops();
-        visitedHops.add(0, hopArrival);
-        parcel.setVisitedHops(visitedHops);
-
-        // TODO update state depending on hop type
-
-        this.parcelRepository.save(parcel);
-
     }
 
     /*@Override

@@ -57,4 +57,12 @@ public class ParcelEntity {
             this.value = value;
         }
     }
+
+    public void removeHopFromFutureHops(HopArrivalEntity hopArrivalEntity){
+        this.futureHops.remove(hopArrivalEntity);
+    }
+
+    public void addHopToVisitedHops(HopArrivalEntity hopArrivalEntity){
+        this.visitedHops.add(hopArrivalEntity);
+    }
 }

@@ -49,6 +49,9 @@ public class ParcelApiController implements ParcelApi {
     @Override
     public ResponseEntity<Void> reportParcelHop(String trackingId, String code) {
         log.info("reportParcelHop " + trackingId + " " + code);
+
+        parcelService.reportParcelArrivalAtHop(trackingId, code);
+
         return ParcelApi.super.reportParcelHop(trackingId, code);
     }
 
