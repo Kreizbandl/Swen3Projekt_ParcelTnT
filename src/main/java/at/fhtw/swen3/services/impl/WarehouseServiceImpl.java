@@ -3,6 +3,8 @@ package at.fhtw.swen3.services.impl;
 import at.fhtw.swen3.persistence.entities.*;
 import at.fhtw.swen3.persistence.repositories.*;
 import at.fhtw.swen3.services.WarehouseService;
+import at.fhtw.swen3.services.dto.GeoCoordinate;
+import at.fhtw.swen3.services.dto.Hop;
 import at.fhtw.swen3.services.dto.Warehouse;
 import at.fhtw.swen3.services.mapper.WarehouseMapper;
 import at.fhtw.swen3.services.mapper.WarehouseMapperImpl;
@@ -37,7 +39,6 @@ public class WarehouseServiceImpl implements WarehouseService {
     private TransferwarehouseRepository transferwarehouseRepository;
     @Autowired
     private TruckRepository truckRepository;
-
     @Autowired
     private WarehouseNextHopsRepository warehouseNextHopsRepository;
     @Autowired
@@ -66,11 +67,6 @@ public class WarehouseServiceImpl implements WarehouseService {
         warehouseRepository.deleteAll();
 
         //store data in db
-        //log.info("Importing warehosues after mapping: " + warehouse);
-        //TODO this doesn't store the entire load in the db -> probably mistakes in the @Entities with the @ManyToOne etc.
-        //warehouseRepository.save(warehouseEntity);//too large for db request
-        //System.out.println("warehosue " + warehouse.toString());
-        //System.out.println("warehosueEntity " + warehouseEntity.toString());
         this.saveWarehouseHierarchyDatabase(warehouseEntity);
     }
 
@@ -90,10 +86,30 @@ public class WarehouseServiceImpl implements WarehouseService {
         return warehouseList.get(0);
     }
 
-
-    public Optional<HopEntity> getHopById(Long id) {
+    @Override
+    //TODO change HopEntity type to dto type
+    public Hop getWarehouseOrTruckByCode(String code) {
         //TODO id != code -> we should find a warehouse/truck by code
-        return hopRepository.findById(id);
+        //TODO change this pfusch solution to something more concrete -> not only hop but more precise -> warehouse/truck/transferwarehouse
+        HopEntity hopEntity = hopRepository.getWarehouseOrTruckByCode(code);
+
+        //System.out.println("hop Entity from dd ------>" + hopEntity);
+
+        Hop hop = new Hop();
+        hop.setCode(hopEntity.getCode());
+        hop.setHopType(hopEntity.getHopType());
+        hop.setDescription(hopEntity.getDescription());
+        hop.setLocationName(hopEntity.getLocationName());
+        hop.setProcessingDelayMins(hopEntity.getProcessingDelayMins());
+
+        GeoCoordinate geo = new GeoCoordinate();
+        geo.setLon(hopEntity.getLocationCoordinates().getLon());
+        geo.setLat(hopEntity.getLocationCoordinates().getLat());
+
+        hop.setLocationCoordinates(geo);
+
+        System.out.println("hoppedihophop -----> " + hop);
+        return hop;
     }
 
     private void saveWarehouseHierarchyDatabase(WarehouseEntity warehouseEntity){

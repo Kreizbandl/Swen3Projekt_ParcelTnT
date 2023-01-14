@@ -30,6 +30,6 @@ public class WarehouseEntity extends HopEntity { //if error, this is new -> exte
                 "id=" + id +
                 ", level=" + level +
                 ", nextHops=" + nextHops +
-                '}' + super.toString();
+                '}';//+ super.toString();
     }
 }
