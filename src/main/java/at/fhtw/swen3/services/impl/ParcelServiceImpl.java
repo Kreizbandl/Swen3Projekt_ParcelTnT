@@ -168,12 +168,23 @@ public class ParcelServiceImpl implements ParcelService {
         parcelRepository.save(parcelEntity);
     }
 
-    public void reportParcelDelivery(ParcelEntity parcel) {
+    @Override
+    public void reportParcelDelivery(String trackingId) {
+        //validate data
+        validator.validate(trackingId);
+        //set state to delivered
+        ParcelEntity parcelEntity = parcelRepository.findByTrackingId(trackingId);
+        parcelEntity.setState(ParcelEntity.StateEnum.DELIVERED);
+        //update db
+        parcelRepository.save(parcelEntity);
+    }
+
+    /*public void reportParcelDelivery(ParcelEntity parcel) {
         validator.validate(parcel);
 
         parcel.setState(ParcelEntity.StateEnum.DELIVERED);
         this.parcelRepository.save(parcel);
-    }
+    }*/
 
     /*@Override
     public GeoCoordinateEntity trackParcel(ParcelEntity parcel) {

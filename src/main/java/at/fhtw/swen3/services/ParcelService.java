@@ -10,7 +10,7 @@ import java.util.Optional;
 
 public interface ParcelService {
     NewParcelInfo submitParcel(Parcel parcel);
-    void reportParcelDelivery(ParcelEntity parcel);
+    void reportParcelDelivery(String trackingId);
     TrackingInformation trackParcel(String trackingId);
     NewParcelInfo transitionParcel(String trackingId, Parcel parcel);
     void reportParcelArrivalAtHop(String trackingId, String code);
