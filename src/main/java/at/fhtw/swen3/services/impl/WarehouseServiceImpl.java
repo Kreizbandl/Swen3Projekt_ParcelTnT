@@ -72,24 +72,30 @@ public class WarehouseServiceImpl implements WarehouseService {
 
     @Override
     public Warehouse exportWarehouse() {
-        log.info("Exporting warehouse");
+        log.info("Exporting warehouses");
 
         //TODO warehouse is not just a list -> a warehouse has a warehouse...
-        List<Warehouse> warehouseList = new ArrayList<>();
+        //List<Warehouse> warehouseList = new ArrayList<>();
         List<WarehouseEntity> warehouseEntities = warehouseRepository.findAll();
-        WarehouseMapperImpl warehouseMapper = new WarehouseMapperImpl();
+        //WarehouseMapperImpl warehouseMapper = new WarehouseMapperImpl();
 
-        for (WarehouseEntity warehouseEntity : warehouseEntities){
-            warehouseList.add(warehouseMapper.entityToDto(warehouseEntity));
-        }
+        System.out.println("warehouseEntities ------> " + warehouseEntities);
 
-        return warehouseList.get(0);
+        Warehouse warehouse = WarehouseMapper.INSTANCE.entityToDto(warehouseEntities.get(0));
+
+        /*for (WarehouseEntity warehouseEntity : warehouseEntities){
+            warehouseList.add(WarehouseMapper.INSTANCE.entityToDto(warehouseEntity));
+            //warehouseList.add(warehouseMapper.entityToDto(warehouseEntity));
+        }*/
+
+        //System.out.println(warehouseList.get(0));
+
+        return warehouse;
     }
 
     @Override
     //TODO change HopEntity type to dto type
     public Hop getWarehouseOrTruckByCode(String code) {
-        //TODO id != code -> we should find a warehouse/truck by code
         //TODO change this pfusch solution to something more concrete -> not only hop but more precise -> warehouse/truck/transferwarehouse
         HopEntity hopEntity = hopRepository.getWarehouseOrTruckByCode(code);
 

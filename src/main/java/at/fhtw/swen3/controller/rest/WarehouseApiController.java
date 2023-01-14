@@ -44,7 +44,9 @@ public class WarehouseApiController implements WarehouseApi {
     @Override
     public ResponseEntity<Warehouse> exportWarehouses() {
         log.info("exportWarehouses");
-        return WarehouseApi.super.exportWarehouses();
+        Warehouse warehouse = warehouseService.exportWarehouse();
+        return new ResponseEntity<Warehouse>(warehouse, HttpStatus.OK);
+        //return WarehouseApi.super.exportWarehouses();
     }
 
     @Override

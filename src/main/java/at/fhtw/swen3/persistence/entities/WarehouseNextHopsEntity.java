@@ -20,12 +20,12 @@ public class WarehouseNextHopsEntity {
     @JoinColumn(name = "hop_id")
     private HopEntity hop = null;
 
-    @Override
+    /*@Override
     public String toString() {
         return "\nWarehouseNextHopsEntity{" +
                 "id=" + id +
                 ", traveltimeMins=" + traveltimeMins +
                 ", hop=" + hop +
                 '}';
-    }
+    }*/
 }
