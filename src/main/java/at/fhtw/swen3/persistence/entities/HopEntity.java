@@ -24,7 +24,7 @@ public class HopEntity {
     private Integer processingDelayMins = null;
     private String locationName = null;
     @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "location_coordinates_id")
+    //@JoinColumn(name = "location_coordinates_id")
     private GeoCoordinateEntity locationCoordinates = null;
 
     @Override

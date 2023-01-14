@@ -1,7 +1,6 @@
 package at.fhtw.swen3.services.impl;
 
-import at.fhtw.swen3.persistence.entities.HopEntity;
-import at.fhtw.swen3.persistence.entities.WarehouseEntity;
+import at.fhtw.swen3.persistence.entities.*;
 import at.fhtw.swen3.persistence.repositories.*;
 import at.fhtw.swen3.services.WarehouseService;
 import at.fhtw.swen3.services.dto.Warehouse;
@@ -55,6 +54,7 @@ public class WarehouseServiceImpl implements WarehouseService {
         WarehouseEntity warehouseEntity = WarehouseMapper.INSTANCE.dtoToEntity(warehouse);
 
         //reset/clear entire db
+        hopRepository.deleteAll();
         errorRepository.deleteAll();
         geoCoordinateRepository.deleteAll();
         hopArrivalRepository.deleteAll();
@@ -64,15 +64,15 @@ public class WarehouseServiceImpl implements WarehouseService {
         truckRepository.deleteAll();
         warehouseRepository.deleteAll();
         warehouseNextHopsRepository.deleteAll();
-        hopRepository.deleteAll();
+
 
         //store data in db
         //log.info("Importing warehosues after mapping: " + warehouse);
         //TODO this doesn't store the entire load in the db -> probably mistakes in the @Entities with the @ManyToOne etc.
-        //warehouseRepository.save(warehouseEntity);
+        //warehouseRepository.save(warehouseEntity);//too large for db request
         //System.out.println("warehosue " + warehouse.toString());
-        System.out.println("warehosueEntity " + warehouseEntity.toString());
-        warehouseRepository.save(warehouseEntity);//too large for db request
+        //System.out.println("warehosueEntity " + warehouseEntity.toString());
+        this.saveWarehouseHierarchyDatabase(warehouseEntity);
     }
 
     @Override
@@ -97,6 +97,37 @@ public class WarehouseServiceImpl implements WarehouseService {
         return hopRepository.findById(id);
     }
 
+    private void saveWarehouseHierarchyDatabase(WarehouseEntity warehouseEntity){
+        for(WarehouseNextHopsEntity warehouseNextHopsEntity : warehouseEntity.getNextHops()){
+            this.saveHopManager(warehouseNextHopsEntity.getHop());
+        }
+        warehouseRepository.save(warehouseEntity);
+    }
 
+    private void saveHopManager(HopEntity hopEntity){
+        if(hopEntity instanceof TruckEntity truckEntity){
+            this.saveTruckInDatabase(truckEntity);
+        }else if(hopEntity instanceof WarehouseEntity warehouseEntity){
+            this.saveWarehouseInDatabase(warehouseEntity);
+        }else if(hopEntity instanceof TransferwarehouseEntity transferwarehouseEntity){
+            this.saveTransferwarehouseInDatabase(transferwarehouseEntity);
+        }
+    }
+
+    private void saveTruckInDatabase(TruckEntity truckEntity){
+        System.out.println("------->truck: " + truckEntity);
+        //geoCoordinateRepository.save(truckEntity.getLocationCoordinates());
+        truckRepository.save(truckEntity);
+    }
+
+    private void saveWarehouseInDatabase(WarehouseEntity warehouseEntity){
+        System.out.println("------->warehouse: ...");
+        this.saveWarehouseHierarchyDatabase(warehouseEntity);
+    }
+
+    private void saveTransferwarehouseInDatabase(TransferwarehouseEntity transferwarehouseEntity){
+        System.out.println("------->transferwarehouse: " + transferwarehouseEntity);
+        transferwarehouseRepository.save(transferwarehouseEntity);
+    }
 
 }

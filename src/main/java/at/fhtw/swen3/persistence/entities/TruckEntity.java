@@ -17,6 +17,8 @@ public class TruckEntity extends HopEntity {// if error, this is new -> extends 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    @Column(columnDefinition="text")
+    @Lob
     private String regionGeoJson = null;
     private String numberPlate = null;
 

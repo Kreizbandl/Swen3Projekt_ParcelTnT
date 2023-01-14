@@ -16,6 +16,8 @@ public class TransferwarehouseEntity extends HopEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    @Column(columnDefinition="text")
+    @Lob
     private String regionGeoJson = null;
     private String logisticsPartner = null;
     private String logisticsPartnerUrl = null;
