@@ -3,11 +3,13 @@ package at.fhtw.swen3.controller.rest;
 import at.fhtw.swen3.controller.ParcelApi;
 
 
+import at.fhtw.swen3.services.ParcelService;
 import at.fhtw.swen3.services.dto.NewParcelInfo;
 import at.fhtw.swen3.services.dto.Parcel;
 import at.fhtw.swen3.services.dto.TrackingInformation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.context.request.NativeWebRequest;
@@ -21,6 +23,9 @@ import javax.annotation.Generated;
 public class ParcelApiController implements ParcelApi {
 
     private final NativeWebRequest request;
+
+    @Autowired
+    private ParcelService parcelService;
 
     @Autowired
     public ParcelApiController(NativeWebRequest request) {
@@ -49,7 +54,9 @@ public class ParcelApiController implements ParcelApi {
     @Override
     public ResponseEntity<NewParcelInfo> submitParcel(Parcel parcel) {
         log.info("submitParcel " + parcel);
-        return ParcelApi.super.submitParcel(parcel);
+        NewParcelInfo parcelInfo = parcelService.submitParcel(parcel);
+        return new ResponseEntity<NewParcelInfo>(parcelInfo, HttpStatus.CREATED);
+        //return ParcelApi.super.submitParcel(parcel);
     }
 
     @Override

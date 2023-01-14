@@ -33,10 +33,10 @@ public class ParcelEntity {
     @Pattern(regexp="^[A-Z0-9]{9}$")
     private String trackingId = null;
     private StateEnum state = null;
-    @OneToMany//(mappedBy = "parcel")
+    @OneToMany(mappedBy = "parcelEntity", cascade = CascadeType.ALL)
     @NotNull
     private List<HopArrivalEntity> visitedHops = new ArrayList<>();
-    @OneToMany//(mappedBy = "parcel")
+    @OneToMany(mappedBy = "parcelEntity", cascade = CascadeType.ALL)
     @NotNull
     private List<HopArrivalEntity> futureHops = new ArrayList<>();
 

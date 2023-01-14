@@ -22,8 +22,8 @@ public class HopArrivalEntity {
     private String description = null;
     private OffsetDateTime dateTime = null;
 
-    @ManyToOne
-    @JoinColumn(name = "parcel_entity_id")
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "parcel_id")
     private ParcelEntity parcelEntity;
 
 }

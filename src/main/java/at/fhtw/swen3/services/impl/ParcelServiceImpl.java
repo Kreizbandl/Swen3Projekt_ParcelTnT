@@ -9,6 +9,8 @@ import at.fhtw.swen3.persistence.repositories.ParcelRepository;
 import at.fhtw.swen3.persistence.repositories.RecipientRepository;
 import at.fhtw.swen3.services.ParcelService;
 import at.fhtw.swen3.services.dto.NewParcelInfo;
+import at.fhtw.swen3.services.dto.Parcel;
+import at.fhtw.swen3.services.mapper.ParcelMapper;
 import at.fhtw.swen3.services.validation.Validator;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -16,6 +18,7 @@ import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -34,29 +37,39 @@ public class ParcelServiceImpl implements ParcelService {
 
 
     @Override
-    public NewParcelInfo submitParcel(ParcelEntity parcel) {
+    public NewParcelInfo submitParcel(Parcel parcel) {
+        ParcelEntity parcelEntity = ParcelMapper.INSTANCE.dtoToParcelEntity(parcel);
+
         //validate data
         validator.validate(parcel);
 
         // TODO make ID unique
         // generate tracking ID
         String trackingId = RandomStringUtils.randomAlphabetic(9).toUpperCase();
+        parcelEntity.setTrackingId(trackingId);
 
         // TODO add gps coordinates
 
-        parcel.setTrackingId(trackingId);
-        parcel.setState(ParcelEntity.StateEnum.PICKUP);
+        //predict future hops
+        //TODO kill me!!!
+        List<HopArrivalEntity> list = new ArrayList<>();
+        list.add(new HopArrivalEntity());
+        parcelEntity.setFutureHops(list);
+        parcelEntity.setVisitedHops(list);
+
+        //set pickup state
+        parcelEntity.setState(ParcelEntity.StateEnum.PICKUP);
 
         // write to DB
-        this.parcelRepository.save(parcel);
-        this.recipientRepository.save(parcel.getSender());
-        this.recipientRepository.save(parcel.getRecipient());
+        this.recipientRepository.save(parcelEntity.getSender());
+        this.recipientRepository.save(parcelEntity.getRecipient());
+        this.parcelRepository.save(parcelEntity);
 
         NewParcelInfo newParcelInfo = new NewParcelInfo();
         newParcelInfo.setTrackingId(trackingId);
         log.info("Submit parcel '" + parcel + "' with Tracking ID: " + trackingId);
-        log.info("Coordinates for parcel: " + geoEncoding.encodeAddress(parcel.getRecipient()));
-        log.info("Future hops: " + parcel.getFutureHops());
+        //log.info("Coordinates for parcel: " + geoEncoding.encodeAddress(parcelEntity.getRecipient()));
+        //log.info("Future hops: " + parcelEntity.getFutureHops());
         return newParcelInfo;
     }
 
