@@ -16,7 +16,16 @@ public class WarehouseNextHopsEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private Integer traveltimeMins = null;
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "hop_id")
     private HopEntity hop = null;
+
+    @Override
+    public String toString() {
+        return "\nWarehouseNextHopsEntity{" +
+                "id=" + id +
+                ", traveltimeMins=" + traveltimeMins +
+                ", hop=" + hop +
+                '}';
+    }
 }

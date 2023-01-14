@@ -35,12 +35,14 @@ public class ParcelServiceImpl implements ParcelService {
 
     @Override
     public NewParcelInfo submitParcel(ParcelEntity parcel) {
+        //validate data
         validator.validate(parcel);
 
         // TODO make ID unique
-        // TODO add gps coordinates
         // generate tracking ID
         String trackingId = RandomStringUtils.randomAlphabetic(9).toUpperCase();
+
+        // TODO add gps coordinates
 
         parcel.setTrackingId(trackingId);
         parcel.setState(ParcelEntity.StateEnum.PICKUP);
