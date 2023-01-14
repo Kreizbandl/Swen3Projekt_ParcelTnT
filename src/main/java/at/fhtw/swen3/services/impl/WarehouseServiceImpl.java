@@ -54,6 +54,7 @@ public class WarehouseServiceImpl implements WarehouseService {
         WarehouseEntity warehouseEntity = WarehouseMapper.INSTANCE.dtoToEntity(warehouse);
 
         //reset/clear entire db
+        warehouseNextHopsRepository.deleteAll();
         hopRepository.deleteAll();
         errorRepository.deleteAll();
         geoCoordinateRepository.deleteAll();
@@ -63,8 +64,6 @@ public class WarehouseServiceImpl implements WarehouseService {
         transferwarehouseRepository.deleteAll();
         truckRepository.deleteAll();
         warehouseRepository.deleteAll();
-        warehouseNextHopsRepository.deleteAll();
-
 
         //store data in db
         //log.info("Importing warehosues after mapping: " + warehouse);
