@@ -13,7 +13,9 @@ public interface ParcelService {
 
     public void reportParcelDelivery(ParcelEntity parcel);
 
-    public GeoCoordinateEntity trackParcel(ParcelEntity parcel);
+    public TrackingInformation trackParcel(String trackingId);
+
+    //public GeoCoordinateEntity trackParcel(ParcelEntity parcel);
 
     public void reportParcelArrivalAtHop(ParcelEntity parcel, HopArrivalEntity hopArrival);
 

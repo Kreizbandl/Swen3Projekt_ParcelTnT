@@ -16,6 +16,7 @@ import org.springframework.web.context.request.NativeWebRequest;
 
 import java.util.Optional;
 import javax.annotation.Generated;
+import javax.sound.midi.Track;
 
 @Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2022-11-24T10:56:43.233247Z[Etc/UTC]")
 @Controller
@@ -62,7 +63,10 @@ public class ParcelApiController implements ParcelApi {
     @Override
     public ResponseEntity<TrackingInformation> trackParcel(String trackingId) {
         log.info("trackParcel " + trackingId);
-        return ParcelApi.super.trackParcel(trackingId);
+
+        TrackingInformation trackingInformation = parcelService.trackParcel(trackingId);
+        return new ResponseEntity<TrackingInformation>(trackingInformation, HttpStatus.FOUND);
+        //return ParcelApi.super.trackParcel(trackingId);
     }
 
     @Override

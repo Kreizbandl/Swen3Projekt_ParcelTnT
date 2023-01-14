@@ -10,6 +10,7 @@ import at.fhtw.swen3.persistence.repositories.RecipientRepository;
 import at.fhtw.swen3.services.ParcelService;
 import at.fhtw.swen3.services.dto.NewParcelInfo;
 import at.fhtw.swen3.services.dto.Parcel;
+import at.fhtw.swen3.services.dto.TrackingInformation;
 import at.fhtw.swen3.services.mapper.ParcelMapper;
 import at.fhtw.swen3.services.validation.Validator;
 import lombok.AllArgsConstructor;
@@ -73,6 +74,20 @@ public class ParcelServiceImpl implements ParcelService {
         return newParcelInfo;
     }
 
+    @Override
+    public TrackingInformation trackParcel(String trackingId) {
+        //validate tracking trackingId
+        validator.validate(trackingId);//will this work?
+
+        //fetch visited hops for parcel from db
+        ParcelEntity parcelEntity = parcelRepository.findByTrackingId(trackingId);
+        System.out.println("here we are: " + parcelEntity.toString());
+
+        //predict or fetch future hops to final destination
+        TrackingInformation trackingInformation = ParcelMapper.INSTANCE.entityToTrackingInformationDto(parcelEntity);
+
+        return trackingInformation;
+    }
 
     public void reportParcelDelivery(ParcelEntity parcel) {
         validator.validate(parcel);
@@ -100,13 +115,13 @@ public class ParcelServiceImpl implements ParcelService {
 
     }
 
-    @Override
+    /*@Override
     public GeoCoordinateEntity trackParcel(ParcelEntity parcel) {
         validator.validate(parcel.getTrackingId());
         log.info("Visited hops for parcel: " + parcel.getVisitedHops());
         log.info("Future hops for parcel: " + parcel.getFutureHops());
         return geoEncoding.encodeAddress(parcel.getRecipient());
-    }
+    }*/
 
 
 }
