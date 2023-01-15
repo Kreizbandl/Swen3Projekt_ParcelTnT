@@ -69,21 +69,13 @@ class ParcelServiceImplTest {
 
     @Test
     void trackParcelTest() {
-        MockitoAnnotations.initMocks(this);
-        Recipient recipient = new Recipient( "Max", "Street 12", "1020", "Wien", "Österreich");
-        Recipient sender = new Recipient("Martin", "Street 21", "1010", "Wien", "Österreich");
-        List<HopArrivalEntity> hops = new ArrayList<>();
-        hops.add(new HopArrivalEntity());
-
-        parcel = new Parcel(12.2f, recipient, sender);
-
         parcelService = new ParcelServiceImpl(parcelRepository, recipientRepository, hopRepository, warehouseRepository, validator);
         NewParcelInfo newParcelInfo = parcelService.submitParcel(parcel);
+
         String trackingid = newParcelInfo.getTrackingId();
         System.out.println(trackingid);
         TrackingInformation trackingInformation = parcelService.trackParcel(trackingid);
 
-//        System.out.println(trackingInformation.getState());
         assertNotNull(trackingInformation);
     }
 
@@ -97,7 +89,6 @@ class ParcelServiceImplTest {
 
     @Test
     void reportParcelDeliveryTest() {
-        //ParcelMapper parcelMapper = new ParcelMapperImpl();
         NewParcelInfo newParcelInfo = parcelService.submitParcel(parcel);
         String trackingid = newParcelInfo.getTrackingId();
         parcelService.reportParcelDelivery(trackingid);
