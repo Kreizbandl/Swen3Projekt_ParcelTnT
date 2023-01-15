@@ -2,10 +2,7 @@ package at.fhtw.swen3.services.impl;
 
 import at.fhtw.swen3.gps.service.GeoEncodingService;
 import at.fhtw.swen3.gps.service.impl.BindEncodingProxy;
-import at.fhtw.swen3.persistence.entities.GeoCoordinateEntity;
-import at.fhtw.swen3.persistence.entities.HopArrivalEntity;
-import at.fhtw.swen3.persistence.entities.HopEntity;
-import at.fhtw.swen3.persistence.entities.ParcelEntity;
+import at.fhtw.swen3.persistence.entities.*;
 import at.fhtw.swen3.persistence.repositories.HopRepository;
 import at.fhtw.swen3.persistence.repositories.ParcelRepository;
 import at.fhtw.swen3.persistence.repositories.RecipientRepository;
@@ -24,6 +21,7 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Random;
 
 
 @Service
@@ -39,21 +37,39 @@ public class ParcelServiceImpl implements ParcelService {
     private HopRepository hopRepository;
 
     private final Validator validator;
-    private final GeoEncodingService geoEncoding = new BindEncodingProxy();
+    private final GeoEncodingService geoEncodingService = new BindEncodingProxy();
 
     @Override
     public NewParcelInfo submitParcel(Parcel parcel) {
-        ParcelEntity parcelEntity = ParcelMapper.INSTANCE.dtoToParcelEntity(parcel);
-
         //validate data
         validator.validate(parcel);
+        //mapping
+        ParcelEntity parcelEntity = ParcelMapper.INSTANCE.dtoToParcelEntity(parcel);
 
-        // TODO make ID unique
         // generate tracking ID
         String trackingId = RandomStringUtils.randomAlphabetic(9).toUpperCase();
         parcelEntity.setTrackingId(trackingId);
 
-        // TODO add gps coordinates
+        //convert adress to coordinates
+        //GeoCoordinateEntity geoCoordinateEntitySender = geoEncodingService.encodeAddress(parcelEntity.getSender());
+        //GeoCoordinateEntity geoCoordinateEntityRecipient = geoEncodingService.encodeAddress(parcelEntity.getRecipient());
+
+        //TODO get the right truck for the right coordinates
+        //TODO check if coordinates are in geojson field
+
+
+        //get all trucks -> D:
+        List<TruckEntity> truckEntityList = new ArrayList<>();
+        truckEntityList = hopRepository.findAllByHopType("truck");
+        //System.out.println("jowjowjow: " + truckEntityList);
+        //choose truck randomly -> please, delete me! :(
+        Random random = new Random();
+        Integer senderTruckInt = random.nextInt(truckEntityList.size());
+        Integer recipientTruckInt = random.nextInt(truckEntityList.size());
+        System.out.println("s: " + truckEntityList.get(senderTruckInt) + " r: " + truckEntityList.get(recipientTruckInt));
+
+
+
 
         //predict future hops
         //TODO kill me!!!
@@ -81,7 +97,7 @@ public class ParcelServiceImpl implements ParcelService {
     @Override
     public TrackingInformation trackParcel(String trackingId) {
         //validate tracking trackingId
-        validator.validate(trackingId);//will this work?
+        validator.validate(trackingId);
 
         //fetch visited hops for parcel from db
         ParcelEntity parcelEntity = parcelRepository.findByTrackingId(trackingId);

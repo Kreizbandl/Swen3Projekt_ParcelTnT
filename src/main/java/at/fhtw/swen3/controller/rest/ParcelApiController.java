@@ -43,7 +43,6 @@ public class ParcelApiController implements ParcelApi {
     @Override
     public ResponseEntity<Void> reportParcelDelivery(String trackingId) {
         log.info("reportParcelDelivery " + trackingId);
-
         parcelService.reportParcelDelivery(trackingId);
         //TODO define response
         return ParcelApi.super.reportParcelDelivery(trackingId);
@@ -52,7 +51,6 @@ public class ParcelApiController implements ParcelApi {
     @Override
     public ResponseEntity<Void> reportParcelHop(String trackingId, String code) {
         log.info("reportParcelHop " + trackingId + " " + code);
-
         parcelService.reportParcelArrivalAtHop(trackingId, code);
         //TODO define response
         return ParcelApi.super.reportParcelHop(trackingId, code);
@@ -63,7 +61,6 @@ public class ParcelApiController implements ParcelApi {
         log.info("submitParcel " + parcel);
         NewParcelInfo parcelInfo = parcelService.submitParcel(parcel);
         return new ResponseEntity<NewParcelInfo>(parcelInfo, HttpStatus.CREATED);
-        //return ParcelApi.super.submitParcel(parcel);
     }
 
     @Override
@@ -71,15 +68,12 @@ public class ParcelApiController implements ParcelApi {
         log.info("trackParcel " + trackingId);
         TrackingInformation trackingInformation = parcelService.trackParcel(trackingId);
         return new ResponseEntity<TrackingInformation>(trackingInformation, HttpStatus.FOUND);
-        //return ParcelApi.super.trackParcel(trackingId);
     }
 
     @Override
     public ResponseEntity<NewParcelInfo> transitionParcel(String trackingId, Parcel parcel) {
         log.info("transitionParcel " + trackingId + " " + parcel);
-
         NewParcelInfo newParcelInfo = parcelService.transitionParcel(trackingId, parcel);
         return new ResponseEntity<NewParcelInfo>(newParcelInfo, HttpStatus.CREATED);
-        //return ParcelApi.super.transitionParcel(trackingId, parcel);
     }
 }
