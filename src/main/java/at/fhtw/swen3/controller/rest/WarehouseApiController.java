@@ -6,6 +6,7 @@ import at.fhtw.swen3.controller.WarehouseApi;
 import at.fhtw.swen3.persistence.entities.HopEntity;
 import at.fhtw.swen3.services.WarehouseService;
 import at.fhtw.swen3.services.dto.Hop;
+import at.fhtw.swen3.services.dto.Truck;
 import at.fhtw.swen3.services.dto.Warehouse;
 import at.fhtw.swen3.services.impl.WarehouseServiceImpl;
 import lombok.extern.slf4j.Slf4j;
@@ -44,24 +45,22 @@ public class WarehouseApiController implements WarehouseApi {
     @Override
     public ResponseEntity<Warehouse> exportWarehouses() {
         log.info("exportWarehouses");
+        //TODO fix it
         Warehouse warehouse = warehouseService.exportWarehouse();
         return new ResponseEntity<Warehouse>(warehouse, HttpStatus.OK);
-        //return WarehouseApi.super.exportWarehouses();
     }
 
     @Override
     public ResponseEntity<Hop> getWarehouse(String code) {
         log.info("getWarehouse " + code);
         Hop hop = warehouseService.getWarehouseOrTruckByCode(code);
-        //TODO return hop to client
         return new ResponseEntity<Hop>(hop, HttpStatus.FOUND);
-        //return WarehouseApi.super.getWarehouse(code);
     }
 
     @Override
     public ResponseEntity<Void> importWarehouses(Warehouse warehouse) {
-        //log.info("importWarehouses " + warehouse);
+        log.info("importWarehouses ");
         warehouseService.importWarehouse(warehouse);
-        return WarehouseApi.super.importWarehouses(warehouse);
+        return new ResponseEntity<Void>(HttpStatus.OK);
     }
 }

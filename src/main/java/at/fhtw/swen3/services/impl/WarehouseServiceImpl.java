@@ -3,9 +3,7 @@ package at.fhtw.swen3.services.impl;
 import at.fhtw.swen3.persistence.entities.*;
 import at.fhtw.swen3.persistence.repositories.*;
 import at.fhtw.swen3.services.WarehouseService;
-import at.fhtw.swen3.services.dto.GeoCoordinate;
-import at.fhtw.swen3.services.dto.Hop;
-import at.fhtw.swen3.services.dto.Warehouse;
+import at.fhtw.swen3.services.dto.*;
 import at.fhtw.swen3.services.mapper.WarehouseMapper;
 import at.fhtw.swen3.services.mapper.WarehouseMapperImpl;
 import at.fhtw.swen3.services.validation.Validator;
@@ -49,7 +47,6 @@ public class WarehouseServiceImpl implements WarehouseService {
     @Override
     public void importWarehouse(Warehouse warehouse) {
         //validate the data
-        //TODO handle validation errors ?
         validator.validate(warehouse);
         //log.info("Importing warehouse before mapping: " + warehouse)
         WarehouseEntity warehouseEntity = WarehouseMapper.INSTANCE.dtoToEntity(warehouse);
@@ -94,27 +91,37 @@ public class WarehouseServiceImpl implements WarehouseService {
     }
 
     @Override
-    //TODO change HopEntity type to dto type
     public Hop getWarehouseOrTruckByCode(String code) {
-        //TODO change this pfusch solution to something more concrete -> not only hop but more precise -> warehouse/truck/transferwarehouse
         HopEntity hopEntity = hopRepository.getWarehouseOrTruckByCode(code);
+        Hop hop = null;
 
-        //System.out.println("hop Entity from dd ------>" + hopEntity);
+        //different values -> there is probably a better solution
+        if(hopEntity instanceof TruckEntity){
+            hop = new Truck();
+            ((Truck) hop).setNumberPlate(((TruckEntity) hopEntity).getNumberPlate());
+            ((Truck) hop).setRegionGeoJson(((TruckEntity) hopEntity).getRegionGeoJson());
+        }else if(hopEntity instanceof WarehouseEntity){
+            hop = new Warehouse();
+            ((Warehouse) hop).setLevel(((WarehouseEntity) hopEntity).getLevel());
+            ((Warehouse) hop).setNextHops(null);
+        }else if(hopEntity instanceof TransferwarehouseEntity){
+            hop = new Transferwarehouse();
+            ((Transferwarehouse) hop).setRegionGeoJson(((TransferwarehouseEntity) hopEntity).getRegionGeoJson());
+            ((Transferwarehouse) hop).setLogisticsPartner(((TransferwarehouseEntity) hopEntity).getLogisticsPartner());
+            ((Transferwarehouse) hop).setLogisticsPartnerUrl(((TransferwarehouseEntity) hopEntity).getLogisticsPartnerUrl());
+        }
 
-        Hop hop = new Hop();
+        //same values for each hop type
         hop.setCode(hopEntity.getCode());
         hop.setHopType(hopEntity.getHopType());
         hop.setDescription(hopEntity.getDescription());
         hop.setLocationName(hopEntity.getLocationName());
         hop.setProcessingDelayMins(hopEntity.getProcessingDelayMins());
-
         GeoCoordinate geo = new GeoCoordinate();
-        geo.setLon(hopEntity.getLocationCoordinates().getLon());
-        geo.setLat(hopEntity.getLocationCoordinates().getLat());
-
+            geo.setLon(hopEntity.getLocationCoordinates().getLon());
+            geo.setLat(hopEntity.getLocationCoordinates().getLat());
         hop.setLocationCoordinates(geo);
 
-        System.out.println("hoppedihophop -----> " + hop);
         return hop;
     }
 
