@@ -6,6 +6,7 @@ import at.fhtw.swen3.persistence.entities.*;
 import at.fhtw.swen3.persistence.repositories.HopRepository;
 import at.fhtw.swen3.persistence.repositories.ParcelRepository;
 import at.fhtw.swen3.persistence.repositories.RecipientRepository;
+import at.fhtw.swen3.persistence.repositories.WarehouseRepository;
 import at.fhtw.swen3.services.ParcelService;
 import at.fhtw.swen3.services.dto.NewParcelInfo;
 import at.fhtw.swen3.services.dto.Parcel;
@@ -35,6 +36,8 @@ public class ParcelServiceImpl implements ParcelService {
     private RecipientRepository recipientRepository;
     @Autowired
     private HopRepository hopRepository;
+    @Autowired
+    private WarehouseRepository warehouseRepository;
 
     private final Validator validator;
     private final GeoEncodingService geoEncodingService = new BindEncodingProxy();
@@ -63,10 +66,14 @@ public class ParcelServiceImpl implements ParcelService {
         truckEntityList = hopRepository.findAllByHopType("truck");
         //System.out.println("jowjowjow: " + truckEntityList);
         //choose truck randomly -> please, delete me! :(
-        Random random = new Random();
+        /*Random random = new Random();
         Integer senderTruckInt = random.nextInt(truckEntityList.size());
-        Integer recipientTruckInt = random.nextInt(truckEntityList.size());
-        System.out.println("s: " + truckEntityList.get(senderTruckInt) + " r: " + truckEntityList.get(recipientTruckInt));
+        Integer recipientTruckInt = random.nextInt(truckEntityList.size());*/
+        //System.out.println("s: " + truckEntityList.get(senderTruckInt) + " r: " + truckEntityList.get(recipientTruckInt));
+
+
+        //List<HopEntity> hops = hopRepository.findAll();
+        //System.out.println("here we go! " + hops + "\n");
 
 
 

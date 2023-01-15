@@ -20,7 +20,7 @@ public class WarehouseEntity extends HopEntity { //if error, this is new -> exte
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private Integer level = null;
-    @OneToMany (mappedBy = "hop", cascade = CascadeType.ALL) //references to "WarehouseNextHopsEntity -> HopEntity hop"
+    @OneToMany (mappedBy = "hop", cascade = CascadeType.PERSIST) //references to "WarehouseNextHopsEntity -> HopEntity hop"
     @NotNull
     private List<WarehouseNextHopsEntity> nextHops = new ArrayList<>();
 

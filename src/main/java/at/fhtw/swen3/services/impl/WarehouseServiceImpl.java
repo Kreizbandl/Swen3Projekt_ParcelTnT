@@ -71,22 +71,9 @@ public class WarehouseServiceImpl implements WarehouseService {
     public Warehouse exportWarehouse() {
         log.info("Exporting warehouses");
 
-        //TODO warehouse is not just a list -> a warehouse has a warehouse...
-        //List<Warehouse> warehouseList = new ArrayList<>();
-        List<WarehouseEntity> warehouseEntities = warehouseRepository.findAll();
-        //WarehouseMapperImpl warehouseMapper = new WarehouseMapperImpl();
-
-        System.out.println("warehouseEntities ------> " + warehouseEntities);
-
-        Warehouse warehouse = WarehouseMapper.INSTANCE.entityToDto(warehouseEntities.get(0));
-
-        /*for (WarehouseEntity warehouseEntity : warehouseEntities){
-            warehouseList.add(WarehouseMapper.INSTANCE.entityToDto(warehouseEntity));
-            //warehouseList.add(warehouseMapper.entityToDto(warehouseEntity));
-        }*/
-
-        //System.out.println(warehouseList.get(0));
-
+        WarehouseEntity warehouseEntity = warehouseRepository.findFirstByIdIsNotNullOrderByIdDesc();
+        System.out.println("warehouseEntities ------> " + warehouseEntity);
+        Warehouse warehouse = WarehouseMapper.INSTANCE.entityToDto(warehouseEntity);
         return warehouse;
     }
 
@@ -127,8 +114,13 @@ public class WarehouseServiceImpl implements WarehouseService {
 
     private void saveWarehouseHierarchyDatabase(WarehouseEntity warehouseEntity){
         for(WarehouseNextHopsEntity warehouseNextHopsEntity : warehouseEntity.getNextHops()){
+            geoCoordinateRepository.save(warehouseNextHopsEntity.getHop().getLocationCoordinates());
             this.saveHopManager(warehouseNextHopsEntity.getHop());
+
+            hopRepository.save(warehouseNextHopsEntity.getHop());
+            warehouseNextHopsRepository.save(warehouseNextHopsEntity);
         }
+        geoCoordinateRepository.save(warehouseEntity.getLocationCoordinates());
         warehouseRepository.save(warehouseEntity);
     }
 

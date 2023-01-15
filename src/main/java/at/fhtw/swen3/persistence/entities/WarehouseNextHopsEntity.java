@@ -16,7 +16,7 @@ public class WarehouseNextHopsEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private Integer traveltimeMins = null;
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne(cascade = CascadeType.PERSIST)
     @JoinColumn(name = "hop_id")
     private HopEntity hop = null;
 
