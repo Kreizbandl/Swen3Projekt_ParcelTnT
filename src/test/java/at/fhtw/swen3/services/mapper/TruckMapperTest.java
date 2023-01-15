@@ -22,7 +22,7 @@ class TruckMapperTest {
         assertEquals(truck.getNumberPlate(),truckEntity.getNumberPlate());
     }
 
-    /*@Test
+    @Test
     public void entityToDto(){
         TruckEntity truckEntity = TruckEntity.builder()
                 .numberPlate("A").regionGeoJson("A").build();
@@ -31,5 +31,5 @@ class TruckMapperTest {
 
         assertEquals(truck.getRegionGeoJson(),truckEntity.getRegionGeoJson());
         assertEquals(truck.getNumberPlate(),truckEntity.getNumberPlate());
-    }*/
+    }
 }
