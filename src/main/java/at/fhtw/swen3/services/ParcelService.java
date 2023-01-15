@@ -4,20 +4,19 @@ import at.fhtw.swen3.persistence.entities.GeoCoordinateEntity;
 import at.fhtw.swen3.persistence.entities.HopArrivalEntity;
 import at.fhtw.swen3.persistence.entities.HopEntity;
 import at.fhtw.swen3.persistence.entities.ParcelEntity;
-import at.fhtw.swen3.services.dto.GeoCoordinate;
-import at.fhtw.swen3.services.dto.HopArrival;
-import at.fhtw.swen3.services.dto.NewParcelInfo;
-import at.fhtw.swen3.services.dto.Recipient;
+import at.fhtw.swen3.services.dto.*;
 
 import java.util.Optional;
 
 public interface ParcelService {
-    public NewParcelInfo submitParcel(ParcelEntity parcel);
+    NewParcelInfo submitParcel(Parcel parcel);
+    void reportParcelDelivery(String trackingId);
+    TrackingInformation trackParcel(String trackingId);
+    NewParcelInfo transitionParcel(String trackingId, Parcel parcel);
+    void reportParcelArrivalAtHop(String trackingId, String code);
 
-    public void reportParcelDelivery(ParcelEntity parcel);
+    //GeoCoordinateEntity trackParcel(ParcelEntity parcel);
 
-    public GeoCoordinateEntity trackParcel(ParcelEntity parcel);
-
-    public void reportParcelArrivalAtHop(ParcelEntity parcel, HopArrivalEntity hopArrival);
+    //void reportParcelArrivalAtHop(ParcelEntity parcel, HopArrivalEntity hopArrival);
 
 }

@@ -18,12 +18,12 @@ public class HopArrivalEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @Pattern(regexp = "^[A-Z]{4}\\d{1,4}$")
-    private String code = null;
+    private String code = null;//via code connection to hop ???
     private String description = null;
     private OffsetDateTime dateTime = null;
 
-    @ManyToOne
-    @JoinColumn(name = "parcel_entity_id")
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "parcel_id")
     private ParcelEntity parcelEntity;
 
 }
